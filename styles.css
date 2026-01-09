@@ -304,3 +304,66 @@ body {
     background: #27ae60; /* Verde para el botón final */
 }
 .sidebar-footer .btn-pagar:hover { background: #219150; }
+
+/* --- FOOTER PRINCIPAL (Pie de Página) --- */
+.footer-principal {
+    background: var(--primary-dark); /* Morado oscuro */
+    color: white;
+    padding: 3rem 1rem;
+    text-align: center;
+    margin-top: 4rem; /* Separación con los productos */
+    border-top: 1px solid rgba(0,0,0,0.05);
+}
+
+.footer-content {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.footer-content h3 {
+    margin-bottom: 1.5rem;
+    font-size: 1.4rem;
+    letter-spacing: 1px;
+}
+
+.footer-content p {
+    margin: 8px 0;
+    opacity: 0.9;
+    font-size: 0.95rem;
+}
+
+.footer-content i {
+    margin-right: 8px;
+}
+
+/* Redes Sociales */
+.redes-sociales {
+    margin: 2rem 0;
+}
+
+.redes-sociales a {
+    color: white;
+    font-size: 1.5rem;
+    margin: 0 12px;
+    transition: transform 0.2s, color 0.2s;
+    display: inline-block;
+}
+
+.redes-sociales a:hover {
+    color: #dcdde1;
+    transform: scale(1.2); /* Efecto zoom al pasar el mouse */
+}
+
+/* Línea divisoria y Copyright */
+.footer-content hr {
+    border: 0;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    margin: 2rem auto;
+    max-width: 60%;
+}
+
+.copyright {
+    font-size: 0.8rem;
+    opacity: 0.6;
+    margin-top: 1rem;
+}
