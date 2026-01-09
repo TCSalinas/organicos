@@ -3,89 +3,157 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Orgánicos La Fer | Fresco y Local</title>
+    <title>Arvinea Organic | Tienda</title>
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
 
-    <header>
-        <h1>🌿 Orgánicos La Fer</h1>
-        <p>Productos frescos, directo del campo a tu mesa.</p>
+    <header class="header-principal">
+        <div class="header-top">
+            <div class="logo-container">
+                <img src="img/logo.jpg" alt="Arvinea Logo" class="logo-img" onerror="this.src='https://via.placeholder.com/150x50?text=ARVINEA'">
+            </div>
+            <div class="cart-icon" onclick="toggleCarrito()">
+                <i class="fas fa-shopping-basket"></i>
+                <span id="cart-count">0</span>
+            </div>
+        </div>
+        <div class="search-container">
+            <i class="fas fa-search search-icon"></i>
+            <input type="text" id="buscador" placeholder="Buscar productos..." onkeyup="filtrarProductos()">
+        </div>
     </header>
 
-    <section class="como-comprar">
-        <h2>¿Cómo funciona?</h2>
-        <div class="pasos-grid">
-            <div class="paso">1. Elige tus productos</div>
-            <div class="paso">2. Pide por WhatsApp</div>
-            <div class="paso">3. Transfiere</div>
-            <div class="paso">4. Recibe en casa 🚚</div>
-        </div>
-    </section>
-
     <main class="contenedor">
-        <h2 class="titulo-seccion">Nuestros Productos</h2>
+        <div class="filtro-categoria"><span class="tag-categoria">Valle Escondido</span></div>
         
-        <div class="grid-productos">
-
+        <div class="grid-productos" id="lista-productos">
             <article class="producto">
-                <div class="producto-img">🍅</div> <div class="producto-info">
-                    <h3>Tomates Limachinos</h3>
-                    <p class="precio">$2.500 / kg</p>
-                    <p class="desc">Tomate jugoso, ideal para ensaladas. Cultivo sin pesticidas.</p>
-                    <a href="https://wa.me/56912345678?text=Hola%20Fer!%20Quiero%20pedir%20Tomates%20Limachinos." 
-                       class="btn-pedir" target="_blank">
-                       Pedir por WhatsApp 💬
-                    </a>
+                <div class="producto-img" onclick="verFotoGrande('img/solvalle250.png')">
+                    <img src="img/solvalle250.png" alt="Sol del Valle">
                 </div>
-            </article>
-
-            <article class="producto">
-                <div class="producto-img">🥚</div>
                 <div class="producto-info">
-                    <h3>Huevos de Campo</h3>
-                    <p class="precio">$6.000 / bandeja</p>
-                    <p class="desc">Bandeja de 30 huevos de gallina feliz. Yema color intenso.</p>
-                    <a href="https://wa.me/56912345678?text=Hola%20Fer!%20Quiero%20pedir%20una%20bandeja%20de%20Huevos." 
-                       class="btn-pedir" target="_blank">
-                       Pedir por WhatsApp 💬
-                    </a>
+                    <div class="info-top">
+                        <h3>Sol del Valle 250g</h3>
+                        <p class="tipo">Mermelada</p>
+                    </div>
+                    <div class="info-bottom">
+                        <p class="precio">$4.000</p>
+                        <button class="btn-agregar" onclick="abrirDetalle('Sol del Valle 250g', 4000, 'img/solvalle250.png')">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                    </div>
                 </div>
             </article>
 
             <article class="producto">
-                <div class="producto-img">🍯</div>
+                <div class="producto-img" onclick="verFotoGrande('img/packsolsombra.png')">
+                    <img src="img/packsolsombra.png" alt="Pack Sol & Sombra">
+                </div>
                 <div class="producto-info">
-                    <h3>Miel de Ulmo</h3>
-                    <p class="precio">$8.000 / litro</p>
-                    <p class="desc">Miel 100% natural cosechada en el sur. Propiedades antibióticas.</p>
-                    <a href="https://wa.me/56912345678?text=Hola%20Fer!%20Quiero%20pedir%20Miel%20de%20Ulmo." 
-                       class="btn-pedir" target="_blank">
-                       Pedir por WhatsApp 💬
-                    </a>
+                    <div class="info-top">
+                        <h3>Pack Sol & Sombra</h3>
+                        <p class="tipo">Mermeladas</p>
+                    </div>
+                    <div class="info-bottom">
+                        <p class="precio">$7.000</p>
+                        <button class="btn-agregar" onclick="abrirDetalle('Pack Sol & Sombra', 7000, 'img/packsolsombra.png')">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                    </div>
                 </div>
             </article>
 
             <article class="producto">
-                <div class="producto-img">🥬</div>
+                <div class="producto-img" onclick="verFotoGrande('img/sombravalle500.png')">
+                    <img src="img/sombravalle500.png" alt="Sombra del Valle">
+                </div>
                 <div class="producto-info">
-                    <h3>Pack Semanal Verde</h3>
-                    <p class="precio">$15.000</p>
-                    <p class="desc">Surtido de lechugas, espinacas, acelga y rúcula de temporada.</p>
-                    <a href="https://wa.me/56912345678?text=Hola%20Fer!%20Me%20interesa%20el%20Pack%20Semanal%20Verde." 
-                       class="btn-pedir" target="_blank">
-                       Pedir por WhatsApp 💬
-                    </a>
+                    <div class="info-top">
+                        <h3>Sombra del Valle 500g</h3>
+                        <p class="tipo">Mermelada</p>
+                    </div>
+                    <div class="info-bottom">
+                        <p class="precio">$7.000</p>
+                        <button class="btn-agregar" onclick="abrirDetalle('Sombra del Valle 500g', 7000, 'img/sombravalle500.png')">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                    </div>
                 </div>
             </article>
-
         </div>
     </main>
 
-    <footer>
-        <p>Contacto: +56 9 1234 5678 | entregas@laferorganicos.cl</p>
-        <p>&copy; 2025 Orgánicos La Fer. Santiago, Chile.</p>
-    </footer>
+    <div id="modal-detalle" class="modal-overlay">
+        <div class="detalle-card">
+            <span class="close-modal" onclick="cerrarDetalle()">&times;</span>
+            <h2 id="det-titulo">Nombre Producto</h2>
+            
+            <div class="detalle-imagen-wrapper">
+                <img id="det-img" src="" alt="Detalle">
+            </div>
 
+            <p class="det-categoria">Mermelada</p>
+            
+            <div class="det-row">
+                <span>Precio base:</span>
+                <span id="det-precio" class="precio-morado">$0.00</span>
+            </div>
+
+            <div class="det-control">
+                <label>Cantidad:</label>
+                <div class="contador-wrapper">
+                    <button onclick="cambiarCantidad(-1)">-</button>
+                    <span id="det-cantidad">1</span>
+                    <button onclick="cambiarCantidad(1)">+</button>
+                </div>
+            </div>
+
+            <label class="lbl-obs">¿Alguna observación?</label>
+            <textarea id="det-obs" placeholder="Ej: Sin etiqueta de regalo..."></textarea>
+
+            <div class="det-footer">
+                <div class="det-total-info">
+                    <span>Total:</span>
+                    <strong id="det-total-calc">$0.00</strong>
+                </div>
+                <button class="btn-confirmar-agregar" onclick="confirmarAgregarAlCarrito()">
+                    Agregar al pedido
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="sidebar-carrito" class="sidebar">
+        <div class="sidebar-header">
+            <h2>Su pedido</h2>
+            <span class="close-sidebar" onclick="toggleCarrito()">&times;</span>
+        </div>
+        
+        <div class="tabs">
+            <div class="tab active">Pedido</div>
+            <div class="tab">Checkout</div>
+            <div class="tab">Confirmar</div>
+        </div>
+
+        <div id="carrito-items" class="sidebar-body">
+            </div>
+
+        <div class="sidebar-footer">
+            <div class="total-row">
+                <span>Total</span>
+                <span id="sidebar-total">$0.00</span>
+            </div>
+            <button class="btn-continuar" onclick="irACheckout()">Continuar</button>
+        </div>
+    </div>
+    <div id="sidebar-overlay" class="overlay-oscuro" onclick="toggleCarrito()"></div>
+
+    <div id="lightbox" class="lightbox" onclick="cerrarFotoGrande()">
+        <img id="lightbox-img" src="">
+    </div>
+
+    <script src="app.js"></script>
 </body>
 </html>
