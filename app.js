@@ -118,7 +118,6 @@ async function procesarPedidoFinal() {
         // A. ENVIAR A EXCEL (SheetMonkey)
         await fetch(SHEET_API, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(datos)
         });
 
