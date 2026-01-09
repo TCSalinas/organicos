@@ -18,7 +18,7 @@ body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
     margin: 0; 
     padding: 0; 
-    padding-bottom: 80px; /* Espacio para el botón flotante */
+    padding-bottom: 0px; /* Espacio para el botón flotante */
     color: var(--text-main);
 }
 
