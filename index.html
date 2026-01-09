@@ -3,30 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Arvinea Organic | Tienda</title>
+    <title>Arvinea Organic</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
 
     <header class="header-principal">
-        <div class="header-top">
-            <div class="logo-container">
-                <img src="img/logo.jpg" alt="Arvinea Logo" class="logo-img" onerror="this.src='https://via.placeholder.com/150x50?text=ARVINEA'">
-            </div>
-            <div class="cart-icon" onclick="toggleCarrito()">
-                <i class="fas fa-shopping-basket"></i>
-                <span id="cart-count">0</span>
-            </div>
+        <div class="logo-container">
+            <img src="img/logo.jpg" alt="Arvinea Logo" class="logo-img">
         </div>
-        <div class="search-container">
+        
+        <div class="search-wrapper">
             <i class="fas fa-search search-icon"></i>
             <input type="text" id="buscador" placeholder="Buscar productos..." onkeyup="filtrarProductos()">
+        </div>
+
+        <div class="categoria-wrapper">
+            <button class="btn-categoria" onclick="irASeccion('valle-escondido')">Valle Escondido</button>
+            <button class="btn-categoria gris">Próximamente</button>
         </div>
     </header>
 
     <main class="contenedor">
-        <div class="filtro-categoria"><span class="tag-categoria">Valle Escondido</span></div>
+        <h2 id="valle-escondido" class="titulo-seccion">Valle Escondido</h2>
         
         <div class="grid-productos" id="lista-productos">
             <article class="producto">
@@ -53,7 +53,7 @@
                 </div>
                 <div class="producto-info">
                     <div class="info-top">
-                        <h3>Pack Sol & Sombra</h3>
+                        <h3>Pack Sol & Sombra del Valle</h3>
                         <p class="tipo">Mermeladas</p>
                     </div>
                     <div class="info-bottom">
@@ -85,43 +85,26 @@
         </div>
     </main>
 
-    <div id="modal-detalle" class="modal-overlay">
-        <div class="detalle-card">
-            <span class="close-modal" onclick="cerrarDetalle()">&times;</span>
-            <h2 id="det-titulo">Nombre Producto</h2>
-            
-            <div class="detalle-imagen-wrapper">
-                <img id="det-img" src="" alt="Detalle">
+    <footer class="footer-principal">
+        <div class="footer-content">
+            <h3>Arvinea Organic</h3>
+            <p><i class="fas fa-envelope"></i> contacto@arvinea.cl</p>
+            <p><i class="fas fa-phone"></i> +56 9 5032 3402</p>
+            <div class="redes-sociales">
+                <a href="#"><i class="fab fa-instagram"></i></a>
+                <a href="#"><i class="fab fa-facebook"></i></a>
+                <a href="#"><i class="fab fa-whatsapp"></i></a>
             </div>
+            <hr>
+            <p class="copyright">Desarrollado por Whasapeate &copy; 2026</p>
+        </div>
+    </footer>
 
-            <p class="det-categoria">Mermelada</p>
-            
-            <div class="det-row">
-                <span>Precio base:</span>
-                <span id="det-precio" class="precio-morado">$0.00</span>
-            </div>
-
-            <div class="det-control">
-                <label>Cantidad:</label>
-                <div class="contador-wrapper">
-                    <button onclick="cambiarCantidad(-1)">-</button>
-                    <span id="det-cantidad">1</span>
-                    <button onclick="cambiarCantidad(1)">+</button>
-                </div>
-            </div>
-
-            <label class="lbl-obs">¿Alguna observación?</label>
-            <textarea id="det-obs" placeholder="Ej: Sin etiqueta de regalo..."></textarea>
-
-            <div class="det-footer">
-                <div class="det-total-info">
-                    <span>Total:</span>
-                    <strong id="det-total-calc">$0.00</strong>
-                </div>
-                <button class="btn-confirmar-agregar" onclick="confirmarAgregarAlCarrito()">
-                    Agregar al pedido
-                </button>
-            </div>
+    <div id="btn-flotante-carrito" class="btn-flotante" onclick="toggleCarrito()">
+        <div class="burbuja-cantidad" id="float-count">0</div>
+        <div class="info-flotante">
+            <span id="float-total">$0</span>
+            <i class="fas fa-shopping-cart"></i>
         </div>
     </div>
 
@@ -132,27 +115,112 @@
         </div>
         
         <div class="tabs">
-            <div class="tab active">Pedido</div>
-            <div class="tab">Checkout</div>
-            <div class="tab">Confirmar</div>
+            <div class="tab active" id="tab-pedido">Pedido</div>
+            <div class="tab" id="tab-checkout">Datos</div>
+            <div class="tab" id="tab-pago">Pago</div>
         </div>
 
-        <div id="carrito-items" class="sidebar-body">
+        <div id="vista-pedido" class="sidebar-body">
+            <div id="carrito-items"></div>
+        </div>
+
+        <div id="vista-checkout" class="sidebar-body" style="display:none;">
+            <div class="toggle-entrega">
+                <button class="btn-toggle active" onclick="setEntrega('delivery')">Delivery</button>
+                <button class="btn-toggle" onclick="setEntrega('pickup')">Pick-up</button>
             </div>
+            <div class="form-grupo">
+                <label>Información del cliente</label>
+                <input type="text" id="cliente-nombre" placeholder="Nombre completo">
+                <input type="text" id="cliente-rut" placeholder="RUT (Opcional)">
+                <input type="tel" id="cliente-telefono" placeholder="Teléfono / WhatsApp">
+            </div>
+            <div class="form-grupo">
+                <label>Dirección de envío</label>
+                <input type="text" id="cliente-direccion" placeholder="Calle, número, comuna...">
+            </div>
+        </div>
+
+        <div id="vista-pago" class="sidebar-body" style="display:none;">
+            <div class="caja-banco">
+                <h3>Datos para Transferencia</h3>
+                <p><strong>Mercado Pago</strong></p>
+                <p><strong>Cuenta Vista</strong></p>
+                <p><strong>N° Cuenta:</strong> 1049386009</p>
+                <p><strong>RUT:</strong> 21.917.234-6</p>
+                <p><strong>Nombre:</strong> Arvinea Organic</p>
+                <p><strong>Correo:</strong> arvinea.organic@gmail.com</p>
+                <hr>
+                <p class="total-final">Total a pagar: <span id="total-final-pago">$0</span></p>
+            </div>
+            
+            <div class="form-grupo upload-section">
+                <label>📎 Subir Comprobante</label>
+                <p style="font-size:0.8rem; color:#666; margin-bottom:5px;">Adjunta la foto o captura de la transferencia.</p>
+                <input type="file" id="input-comprobante" accept="image/*">
+            </div>
+        </div>
 
         <div class="sidebar-footer">
-            <div class="total-row">
+            <div class="total-row" id="footer-total-row">
                 <span>Total</span>
                 <span id="sidebar-total">$0.00</span>
             </div>
-            <button class="btn-continuar" onclick="irACheckout()">Continuar</button>
+            
+            <button id="btn-paso-1" class="btn-continuar" onclick="irADatos()">Continuar</button>
+
+            <div id="btns-paso-2" style="display:none; gap:10px;">
+                <button class="btn-volver" onclick="volverAPedido()">Volver</button>
+                <button class="btn-continuar" onclick="irAPago()">Ir al Pago</button>
+            </div>
+
+            <div id="btns-paso-3" style="display:none; gap:10px;">
+                <button class="btn-volver" onclick="volverADatos()">Volver</button>
+                <button class="btn-pagar" id="btn-enviar-final" onclick="procesarPedidoFinal()">Enviar Pedido 🚀</button>
+            </div>
         </div>
     </div>
     <div id="sidebar-overlay" class="overlay-oscuro" onclick="toggleCarrito()"></div>
 
-    <div id="lightbox" class="lightbox" onclick="cerrarFotoGrande()">
-        <img id="lightbox-img" src="">
+    <div id="modal-detalle" class="modal-overlay">
+        <div class="detalle-card">
+            <span class="close-modal" onclick="cerrarDetalle()">&times;</span>
+            <h2 id="det-titulo">Producto</h2>
+            <div class="detalle-imagen-wrapper"><img id="det-img" src=""></div>
+            <p class="det-categoria">Mermelada</p>
+            <div class="det-row"><span>Precio base:</span><span id="det-precio" class="precio-morado">$0</span></div>
+            <div class="det-control">
+                <label>Cantidad:</label>
+                <div class="contador-wrapper">
+                    <button onclick="cambiarCantidad(-1)">-</button>
+                    <span id="det-cantidad">1</span>
+                    <button onclick="cambiarCantidad(1)">+</button>
+                </div>
+            </div>
+            <textarea id="det-obs" placeholder="¿Alguna observación?"></textarea>
+            <div class="det-footer">
+                <div class="det-total-info"><span>Total:</span><strong id="det-total-calc">$0</strong></div>
+                <button class="btn-confirmar-agregar" onclick="confirmarAgregarAlCarrito()">Agregar al pedido</button>
+            </div>
+        </div>
     </div>
+
+    <div id="lightbox" class="lightbox" onclick="cerrarFotoGrande()"><img id="lightbox-img" src=""></div>
+    <div id="btn-subir" onclick="window.scrollTo(0,0)"><i class="fas fa-arrow-up"></i></div>
+
+    <form id="form-real" action="https://formsubmit.co/arvinea.organic@gmail.com" method="POST" enctype="multipart/form-data" style="display:none;">
+        <input type="hidden" name="_captcha" value="false">
+        <input type="hidden" name="_next" value="https://tcsalinas.github.io/organicos/gracias.html">
+        <input type="hidden" name="_subject" value="Nuevo Pedido Web!">
+        
+        <input type="text" name="Pedido" id="real-pedido">
+        <input type="text" name="Total" id="real-total">
+        <input type="text" name="Cliente" id="real-cliente">
+        <input type="text" name="Telefono" id="real-telefono">
+        <input type="text" name="Direccion" id="real-direccion">
+        
+        <input type="file" name="Comprobante" id="real-file">
+    </form>
 
     <script src="app.js"></script>
 </body>
