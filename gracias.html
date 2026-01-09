@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>¡Pedido Recibido! | Arvinea Organic</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* Estilos específicos para esta página de gracias */
+        .gracias-container {
+            text-align: center;
+            padding: 4rem 1rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .icono-exito {
+            font-size: 5rem;
+            color: #27ae60; /* Verde éxito */
+            margin-bottom: 1.5rem;
+            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .titulo-gracias {
+            color: var(--primary);
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+        .texto-gracias {
+            font-size: 1.1rem;
+            color: #555;
+            margin-bottom: 2.5rem;
+            line-height: 1.6;
+        }
+        
+        /* Botón WhatsApp destacado */
+        .btn-wsp {
+            background-color: #25D366;
+            color: white;
+            padding: 15px 30px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.1rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 4px 15px rgba(37, 211, 102, 0.4);
+            transition: transform 0.2s;
+            margin-bottom: 15px;
+        }
+        .btn-wsp:hover { transform: scale(1.05); background-color: #20bd5a; }
+
+        .btn-volver-tienda {
+            display: block;
+            margin-top: 1rem;
+            color: var(--text-light);
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+        .btn-volver-tienda:hover { color: var(--primary); text-decoration: underline; }
+
+        @keyframes popIn { from { transform: scale(0); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+    </style>
+</head>
+<body>
+
+    <header class="header-principal" style="justify-content: center;">
+        <div class="logo-container">
+            <img src="img/logo.jpg" alt="Arvinea Logo" class="logo-img">
+        </div>
+    </header>
+
+    <main class="contenedor">
+        <div class="gracias-container">
+            <div class="icono-exito">
+                <i class="fas fa-check-circle"></i>
+            </div>
+
+            <h1 class="titulo-gracias">¡Pedido Enviado!</h1>
+            
+            <p class="texto-gracias">
+                Hemos recibido tu comprobante y el detalle de tu compra. <br>
+                Felipe revisará la transferencia y preparará tu pedido.
+            </p>
+
+            <a href="https://wa.me/56973497812?text=Hola%20Arvinea,%20acabo%20de%20enviar%20un%20pedido%20por%20la%20web%20%F0%9F%91%8B" class="btn-wsp" target="_blank">
+                <i class="fab fa-whatsapp"></i> Avisar por WhatsApp
+            </a>
+
+            <br>
+
+            <a href="index.html" class="btn-volver-tienda">
+                &larr; Volver a la tienda
+            </a>
+        </div>
+    </main>
+
+    <footer class="footer-principal" style="margin-top: 0;">
+        <div class="footer-content">
+            <p class="copyright">&copy; 2026 Arvinea Organic</p>
+        </div>
+    </footer>
+
+</body>
+</html>
