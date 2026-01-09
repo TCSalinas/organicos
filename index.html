@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+<!--EL HEAD ES EL TITULO DE LA VENTANA QUE SE VE EN LA PESTAÑA AQUI SE LINKEA CON EL ARCHIVO DE ESTILO DE LA PAGINA-->
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,13 +8,14 @@
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
-<body>
 
+<body>
     <header class="header-principal">
+        <!--LOGO-->
         <div class="logo-container">
             <img src="img/logo.jpg" alt="Arvinea Logo" class="logo-img">
         </div>
-        
+        <!--BUSCADOR-->
         <div class="search-wrapper">
             <i class="fas fa-search search-icon"></i>
             <input type="text" id="buscador" placeholder="Buscar productos..." onkeyup="filtrarProductos()">
@@ -65,6 +67,28 @@
                 </div>
             </article>
 
+            
+            <article class="producto">
+                <div class="producto-img" onclick="verFotoGrande('img/packsolsombra.png')">
+                    <img src="img/packsolsombra.png" alt="Pack Sol & Sombra">
+                </div>
+                <div class="producto-info">
+                    <div class="info-top">
+                        <h3>Pack Sol & Sombra del Valle 50% dcto!!!</h3>
+                        <p class="tipo">Mermeladas</p>
+                    </div>
+                    <div class="info-bottom">
+                        <p class="precio">$3.000</p>
+                        <button class="btn-agregar" onclick="abrirDetalle('Pack Sol & Sombra 50%', 3000, 'img/packsolsombra.png')">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                    </div>
+                </div>
+            </article>
+
+
+
+
             <article class="producto">
                 <div class="producto-img" onclick="verFotoGrande('img/sombravalle500.png')">
                     <img src="img/sombravalle500.png" alt="Sombra del Valle">
@@ -85,21 +109,27 @@
         </div>
     </main>
 
+<!--FOOTER-->
     <footer class="footer-principal">
         <div class="footer-content">
             <h3>Arvinea Organic</h3>
             <p><i class="fas fa-envelope"></i> arvinea.organic@gmail.com</p>
             <p><i class="fas fa-phone"></i> +56 9 7349 7812</p>
             <div class="redes-sociales">
-                <a href="#"><i class="fab fa-instagram"></i></a>
-                <a href="#"><i class="fab fa-facebook"></i></a>
-                <a href="#"><i class="fab fa-whatsapp"></i></a>
+                <a href="#LINK IG"><i class="fab fa-instagram"></i></a>
+                <a href="#LINKFACE"><i class="fab fa-facebook"></i></a>
+                <a href="#LINKWSP"><i class="fab fa-whatsapp"></i></a>
             </div>
             <hr>
             <p class="copyright">Desarrollado por TCSalinas &copy; 2026</p>
         </div>
     </footer>
 
+
+
+
+
+    
     <div id="btn-flotante-carrito" class="btn-flotante" onclick="toggleCarrito()">
         <div class="burbuja-cantidad" id="float-count">0</div>
         <div class="info-flotante">
