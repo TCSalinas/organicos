@@ -86,9 +86,6 @@
                 </div>
             </article>
 
-
-
-
             <article class="producto">
                 <div class="producto-img" onclick="verFotoGrande('img/sombravalle500.png')">
                     <img src="img/sombravalle500.png" alt="Sombra del Valle">
@@ -114,7 +111,7 @@
         <div class="footer-content">
             <h3>Arvinea Organic</h3>
             <p><i class="fas fa-envelope"></i> arvinea.organic@gmail.com</p>
-            <p><i class="fas fa-phone"></i> +56 9 7349 7812</p>
+            <p><i class="fas fa-phone"></i> +56 9 5032 3402</p>
             <div class="redes-sociales">
                 <a href="#LINK IG"><i class="fab fa-instagram"></i></a>
                 <a href="#LINKFACE"><i class="fab fa-facebook"></i></a>
@@ -129,7 +126,7 @@
 
 
 
-    
+
     <div id="btn-flotante-carrito" class="btn-flotante" onclick="toggleCarrito()">
         <div class="burbuja-cantidad" id="float-count">0</div>
         <div class="info-flotante">
@@ -156,19 +153,37 @@
 
         <div id="vista-checkout" class="sidebar-body" style="display:none;">
             <div class="toggle-entrega">
-                <button class="btn-toggle active" onclick="setEntrega('delivery')">Delivery</button>
-                <button class="btn-toggle" onclick="setEntrega('pickup')">Pick-up</button>
+                <button id="btn-delivery" class="btn-toggle active" onclick="setEntrega('delivery')">
+                    <i class="fas fa-motorcycle"></i> Delivery
+                </button>
+                <button id="btn-pickup" class="btn-toggle" onclick="setEntrega('pickup')">
+                    <i class="fas fa-walking"></i> Retiro Gratis
+                </button>
             </div>
+
             <div class="form-grupo">
                 <label>Información del cliente</label>
                 <input type="text" id="cliente-nombre" placeholder="Nombre completo">
-                <input type="text" id="cliente-rut" placeholder="RUT (Opcional)">
-                <input type="tel" id="cliente-telefono" placeholder="Teléfono / WhatsApp">
+                <input type="text" id="cliente-rut" placeholder="RUT (ej: 12345678-9)" oninput="formatoRut(this)">
+                <input type="tel" id="cliente-telefono" placeholder="Teléfono (9 dígitos)">
             </div>
-            <div class="form-grupo">
+
+            <div id="contenedor-delivery" class="form-grupo">
                 <label>Dirección de envío</label>
                 <input type="text" id="cliente-direccion" placeholder="Calle, número, comuna...">
+                <p class="nota-input">*El costo de envío se coordina tras el pago.</p>
             </div>
+
+            <div id="contenedor-retiro" class="form-grupo" style="display:none;">
+                <label>Punto de Retiro</label>
+                <select id="lugar-retiro">
+                    <option value="">Selecciona un lugar...</option>
+                    <option value="Metro Bellavista (L5)">Metro Bellavista de la Florida (Línea 5)</option>
+                    <option value="Plaza de Armas">Plaza de Armas (Santiago Centro)</option>
+                </select>
+                <p class="nota-input">*Horario exacto a coordinar por WhatsApp.</p>
+            </div>
+
         </div>
 
         <div id="vista-pago" class="sidebar-body" style="display:none;">

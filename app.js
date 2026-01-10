@@ -3,10 +3,18 @@ let carrito = [];
 let productoTemporal = {};
 let tipoEntrega = 'delivery'; 
 
-// URL de SheetMonkey (Para el Excel) - ¡CÁMBIALA POR LA TUYA!
-const SHEET_API = 'https://script.google.com/macros/s/AKfycbw7Wjr72Ri9STq8c4gRF_hQKEW-cpbR19boRMRjKylxcqeIW_ry0Ag8DLHEV5_PImPXMQ/exec';
+// --- STOCK ----
+const STOCK = {
+    'Sol del Valle 250g': 10,
+    'Sombra del Valle 500g': 5,
+    'Pack Sol & Sombra': 3,
+    'Miel de Ulmo 1kg': 0 
+};
 
-// --- ARREGLO ESC LISTENER (Global y Robusto) ---
+// URL de Sheet (Para el Excel) 
+const SHEET_API = 'https://script.google.com/macros/s/AKfycbyajI5sDoe3MQ--mzzetiR3x6t4rUnPNqbi_S1RthMJUEj_9TMQSl5ogja-p3T1AS0CRA/exec';
+
+// --- ARREGLO ESC LISTENER ---
 document.addEventListener('keydown', function(event) {
     if (event.key === "Escape") {
         document.getElementById('lightbox').style.display = 'none';
@@ -14,132 +22,200 @@ document.addEventListener('keydown', function(event) {
         
         const sidebar = document.getElementById('sidebar-carrito');
         const overlay = document.getElementById('sidebar-overlay');
-        if (sidebar.classList.contains('active')) {
-            sidebar.classList.remove('active');
-            overlay.classList.remove('active');
+        if (sidebar && sidebar.classList.contains('active')) {
+            toggleCarrito();
         }
     }
 });
 
-// --- NAVEGACIÓN SUAVE ---
-function irASeccion(id) {
-    const elemento = document.getElementById(id);
-    if(elemento) {
-        elemento.scrollIntoView({ behavior: 'smooth' });
+// --- LÓGICA DE ENTREGA (CORREGIDA) ---
+function setEntrega(tipo) {
+    tipoEntrega = tipo; // Guardamos la elección en la variable global
+    
+    // 1. Actualizar colores de los botones
+    const btnDelivery = document.getElementById('btn-delivery');
+    const btnPickup = document.getElementById('btn-pickup');
+    
+    if(tipo === 'delivery') {
+        btnDelivery.classList.add('active');
+        btnPickup.classList.remove('active');
+    } else {
+        btnPickup.classList.add('active');
+        btnDelivery.classList.remove('active');
+    }
+
+    // 2. Mostrar/Ocultar los contenedores correctos
+    // Si es delivery, mostramos la dirección y ocultamos el select de retiro
+    const divDelivery = document.getElementById('contenedor-delivery');
+    const divRetiro = document.getElementById('contenedor-retiro');
+
+    if(tipo === 'delivery') {
+        divDelivery.style.display = 'block';
+        divRetiro.style.display = 'none';
+    } else {
+        divDelivery.style.display = 'none';
+        divRetiro.style.display = 'block';
     }
 }
 
-// --- LÓGICA DE NAVEGACIÓN (FLUJO DE 3 PASOS) ---
+// --- VALIDACIONES DE RUT (FALTABA ESTA FUNCIÓN) ---
+function formatoRut(input) {
+    // Eliminar todo lo que no sea número o K
+    let valor = input.value.replace(/[^0-9kK]/g, "");
+    
+    // Si hay más de un caracter, poner el guión antes del último
+    if (valor.length > 1) {
+        let cuerpo = valor.slice(0, -1);
+        let dv = valor.slice(-1);
+        input.value = cuerpo + "-" + dv;
+    } else {
+        input.value = valor;
+    }
+}
 
-// Paso 1 -> Paso 2 (De Pedido a Datos)
+function validarRut(rut) {
+    if (!rut || rut.length < 3) return false;
+    let valor = rut.replace(/\./g, '').replace(/-/g, '');
+    let cuerpo = valor.slice(0, -1);
+    let dv = valor.slice(-1).toUpperCase();
+    
+    // Validar largo mínimo
+    if (cuerpo.length < 7) return false; 
+    
+    let suma = 0;
+    let multiplo = 2;
+    for (let i = 1; i <= cuerpo.length; i++) {
+        let index = multiplo * valor.charAt(cuerpo.length - i);
+        suma = suma + index;
+        if (multiplo < 7) { multiplo = multiplo + 1; } else { multiplo = 2; }
+    }
+    let dvEsperado = 11 - (suma % 11);
+    dvEsperado = (dvEsperado == 11) ? "0" : ((dvEsperado == 10) ? "K" : dvEsperado.toString());
+    
+    return dv == dvEsperado;
+}
+
+
+// --- NAVEGACIÓN ---
+function irASeccion(id) {
+    const elemento = document.getElementById(id);
+    if(elemento) { elemento.scrollIntoView({ behavior: 'smooth' }); }
+}
+
 function irADatos() {
     if(carrito.length === 0) { alert("Tu carrito está vacío 🍃"); return; }
     cambiarPestaña('tab-checkout', 'vista-checkout', 'btns-paso-2');
 }
 
-// Paso 2 -> Paso 3 (De Datos a Pago)
 function irAPago() {
-    // Validar datos básicos
     const nombre = document.getElementById('cliente-nombre').value;
     const fono = document.getElementById('cliente-telefono').value;
+    const rut = document.getElementById('cliente-rut').value;
     
+    // Validaciones antes de pasar al pago
     if(!nombre || !fono) { 
-        alert("Por favor completa tu nombre y teléfono para poder contactarte."); 
+        alert("Por favor completa tu nombre y teléfono."); 
         return; 
     }
+    if (rut && !validarRut(rut)) { // Si escribió RUT, validarlo
+        alert("El RUT ingresado no es válido.");
+        return;
+    }
 
-    // Calcular y mostrar resumen final en la vista de pago
     let total = 0;
     carrito.forEach(i => total += (i.precioBase * i.cantidad));
     document.getElementById('total-final-pago').innerText = '$' + total.toLocaleString('es-CL');
 
     cambiarPestaña('tab-pago', 'vista-pago', 'btns-paso-3');
-    // Ocultamos el total del footer porque ya se muestra grande en la caja de banco
     document.getElementById('footer-total-row').style.display = 'none'; 
 }
 
-// Volver atrás
 function volverAPedido() { 
     cambiarPestaña('tab-pedido', 'vista-pedido', 'btn-paso-1'); 
     document.getElementById('footer-total-row').style.display = 'flex';
 }
-
 function volverADatos() { 
     cambiarPestaña('tab-checkout', 'vista-checkout', 'btns-paso-2');
     document.getElementById('footer-total-row').style.display = 'flex';
 }
 
-// Función auxiliar para cambiar vistas
 function cambiarPestaña(tabId, vistaId, btnGroupId) {
-    // Resetear clases y ocultar todo
     document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
     document.querySelectorAll('.sidebar-body').forEach(v => v.style.display = 'none');
     
-    // Ocultar todos los botones del footer
     document.getElementById('btn-paso-1').style.display = 'none';
     document.getElementById('btns-paso-2').style.display = 'none';
     document.getElementById('btns-paso-3').style.display = 'none';
 
-    // Activar lo seleccionado
     document.getElementById(tabId).classList.add('active');
     document.getElementById(vistaId).style.display = 'block';
     
-    // Mostrar el grupo de botones correspondiente (si existe)
     const btnGroup = document.getElementById(btnGroupId);
     if(btnGroup) btnGroup.style.display = (btnGroupId === 'btns-paso-2' || btnGroupId === 'btns-paso-3') ? 'flex' : 'block';
 }
 
-// --- PROCESO FINAL (Excel + Correo) ---
+// --- PROCESO FINAL ---
 async function procesarPedidoFinal() {
-    const btn = document.getElementById('btn-enviar-final');
-    const fileInput = document.getElementById('input-comprobante');
-
-    // Validación de comprobante (opcional, pero recomendada)
-    if (fileInput.files.length === 0) {
-        if(!confirm("No has subido el comprobante de transferencia. ¿Deseas enviar el pedido de todas formas?")) return;
+    const nombre = document.getElementById('cliente-nombre').value;
+    const telefono = document.getElementById('cliente-telefono').value;
+    const rut = document.getElementById('cliente-rut').value;
+    
+    // Obtenemos la ubicación según lo seleccionado
+    let ubicacionFinal = "";
+    if (tipoEntrega === 'delivery') {
+        ubicacionFinal = document.getElementById('cliente-direccion').value;
+        if(!ubicacionFinal) { alert("Por favor ingresa tu dirección."); return; }
+    } else {
+        ubicacionFinal = document.getElementById('lugar-retiro').value;
+        if(!ubicacionFinal) { alert("Por favor selecciona un punto de retiro."); return; }
     }
 
-    btn.innerText = "Enviando...";
-    btn.disabled = true;
+    const pedidoTexto = carrito.map(item => `${item.cantidad}x ${item.nombre}`).join(', ');
+    
+    // Calculamos total
+    let totalCalculado = 0;
+    carrito.forEach(i => totalCalculado += (i.precioBase * i.cantidad));
 
-    // Recopilar Datos
     const datos = {
-        fecha: new Date().toLocaleString(),
-        cliente: document.getElementById('cliente-nombre').value,
-        telefono: document.getElementById('cliente-telefono').value,
-        direccion: document.getElementById('cliente-direccion').value,
-        rut: document.getElementById('cliente-rut').value,
+        cliente: nombre,
+        telefono: telefono,
+        rut: rut,
         entrega: tipoEntrega,
-        total: document.getElementById('sidebar-total').innerText,
-        pedido: carrito.map(i => `${i.cantidad}x ${i.nombre}`).join(', ')
+        ubicacion: ubicacionFinal,
+        pedido: pedidoTexto,
+        total: totalCalculado
     };
 
+    const btn = document.getElementById('btn-enviar-final');
+    const textoOriginal = btn.textContent;
+    btn.textContent = "Procesando...";
+    btn.disabled = true;
+
     try {
-        // A. ENVIAR A EXCEL (SheetMonkey)
-        await fetch(SHEET_API, {
+        // A. Google Sheet (Obtener ID)
+        const response = await fetch(SHEET_API, {
             method: 'POST',
             body: JSON.stringify(datos)
         });
+        const respuestaJson = await response.json();
+        const idRecibido = respuestaJson.idPedido || "PENDIENTE"; 
 
-        // B. ENVIAR CORREO CON ADJUNTO (FormSubmit)
-        // Pasamos los datos al formulario oculto
-        document.getElementById('real-pedido').value = datos.pedido;
-        document.getElementById('real-total').value = datos.total;
-        document.getElementById('real-cliente').value = datos.cliente;
-        document.getElementById('real-telefono').value = datos.telefono;
-        document.getElementById('real-direccion').value = datos.direccion + " (" + datos.entrega + ")";
+        console.log("Pedido guardado con ID:", idRecibido);
 
-        // Clonar el archivo al input oculto
-        const realFileInput = document.getElementById('real-file');
-        realFileInput.files = fileInput.files;
+        // B. Llenar inputs ocultos para FormSubmit
+        document.getElementById('real-cliente').value = `${nombre} (${idRecibido})`;
+        document.getElementById('real-pedido').value = pedidoTexto;
+        document.getElementById('real-total').value = totalCalculado;
+        document.getElementById('real-telefono').value = telefono;
+        document.getElementById('real-direccion').value = ubicacionFinal;
 
-        // Enviar el formulario nativo
+        // C. Enviar Formulario
         document.getElementById('form-real').submit();
 
     } catch (error) {
-        console.error(error);
-        alert("Hubo un error de conexión. Intenta nuevamente.");
-        btn.innerText = "Reintentar";
+        console.error('Error:', error);
+        alert('Hubo un error de conexión. Intenta nuevamente.');
+        btn.textContent = textoOriginal;
         btn.disabled = false;
     }
 }
@@ -148,31 +224,20 @@ async function procesarPedidoFinal() {
 function filtrarProductos() {
     const input = document.getElementById('buscador');
     if (!input) return;
-    
     const filtro = input.value.toUpperCase().trim();
     const items = document.getElementsByClassName('producto');
-
     for (let i = 0; i < items.length; i++) {
         const item = items[i];
         const tituloTag = item.querySelector('h3');
-        
         if (tituloTag) {
             const textoTitulo = tituloTag.innerText || tituloTag.textContent;
-            if (textoTitulo.toUpperCase().indexOf(filtro) > -1) {
-                item.style.display = "";
-            } else {
-                item.style.display = "none";
-            }
+            item.style.display = (textoTitulo.toUpperCase().indexOf(filtro) > -1) ? "" : "none";
         }
     }
 }
-
-// Listener para el buscador
 document.addEventListener("DOMContentLoaded", function() {
     const inputBuscador = document.getElementById('buscador');
-    if(inputBuscador) {
-        inputBuscador.addEventListener('keyup', filtrarProductos);
-    }
+    if(inputBuscador) inputBuscador.addEventListener('keyup', filtrarProductos);
 });
 
 // --- FUNCIONES DEL CARRITO Y MODAL ---
@@ -190,10 +255,27 @@ function abrirDetalle(nombre, precio, imagen) {
 function cerrarDetalle() { document.getElementById('modal-detalle').style.display = 'none'; }
 
 function cambiarCantidad(delta) {
-    if (productoTemporal.cantidad + delta >= 1) {
-        productoTemporal.cantidad += delta;
+    let nuevaCantidad = productoTemporal.cantidad + delta;
+    let nombre = productoTemporal.nombre;
+    let stockMaximo = STOCK[nombre] !== undefined ? STOCK[nombre] : 100;
+
+    // Calculamos cuánto ya hay en el carrito para descontarlo del límite
+    let cantidadEnCarrito = 0;
+    for (let item of carrito) {
+        if (item.nombre === nombre) {
+            cantidadEnCarrito += item.cantidad;
+        }
+    }
+    
+    let limiteReal = stockMaximo - cantidadEnCarrito;
+
+    // Validación: No bajar de 1 y No subir del stock disponible
+    if (nuevaCantidad >= 1 && nuevaCantidad <= limiteReal) {
+        productoTemporal.cantidad = nuevaCantidad;
         document.getElementById('det-cantidad').innerText = productoTemporal.cantidad;
         actualizarTotalModal();
+    } else if (nuevaCantidad > limiteReal) {
+        alert(`No puedes agregar más. Stock máximo: ${stockMaximo} (Tienes ${cantidadEnCarrito} en el carrito).`);
     }
 }
 
@@ -203,24 +285,49 @@ function actualizarTotalModal() {
 }
 
 function confirmarAgregarAlCarrito() {
+    let nombre = productoTemporal.nombre;
+    
+    // Si no está en la lista STOCK, asumimos que hay 100 disponibles
+    let stockMaximo = STOCK[nombre] !== undefined ? STOCK[nombre] : 100;
+    
+    // 1. Contar cuántos ya tienes en el carrito
+    let cantidadEnCarrito = 0;
+    for (let item of carrito) {
+        if (item.nombre === nombre) {
+            cantidadEnCarrito += (item.cantidad || 1);
+        }
+    }
+
+    // 2. Verificar: Lo que ya tengo + Lo que quiero agregar ahora
+    let cantidadTotal = cantidadEnCarrito + productoTemporal.cantidad;
+
+    if (cantidadTotal > stockMaximo) {
+        // Calculamos cuántos le quedan disponibles para agregar
+        let disponibles = stockMaximo - cantidadEnCarrito;
+        if (disponibles <= 0) {
+            alert(`¡Ya tienes todo el stock disponible de ${nombre} en tu carrito!`);
+        } else {
+            alert(`Solo quedan ${stockMaximo} unidades en total. Ya tienes ${cantidadEnCarrito} en el carrito, así que solo puedes agregar ${disponibles} más.`);
+        }
+        return; // Detiene la función
+    }
+
+    // Si pasa la validación, guarda
     productoTemporal.observacion = document.getElementById('det-obs').value;
     carrito.push({ ...productoTemporal });
     actualizarCarritoUI();
     cerrarDetalle();
-    toggleCarrito(); // Abrir sidebar para mostrar
+    toggleCarrito(); 
 }
 
-// --- LÓGICA DEL SIDEBAR ---
-
+// --- SIDEBAR UI ---
 function toggleCarrito() {
     const sidebar = document.getElementById('sidebar-carrito');
     const overlay = document.getElementById('sidebar-overlay');
     
-    // Si se está abriendo, asegurar que empiece en la vista 1
     if (!sidebar.classList.contains('active')) {
         volverAPedido();
     }
-    
     sidebar.classList.toggle('active');
     overlay.classList.toggle('active');
 }
@@ -253,14 +360,10 @@ function actualizarCarritoUI() {
     });
 
     const totalTexto = '$' + total.toLocaleString('es-CL');
-    
-    // Actualizar Botón Flotante
     document.getElementById('float-count').innerText = carrito.length;
     document.getElementById('float-total').innerText = totalTexto;
     const btnFlotante = document.getElementById('btn-flotante-carrito');
     if (carrito.length > 0) btnFlotante.style.display = 'flex';
-    
-    // Actualizar Footer Sidebar
     document.getElementById('sidebar-total').innerText = totalTexto;
 }
 
@@ -269,24 +372,7 @@ function eliminarItem(index) {
     actualizarCarritoUI();
 }
 
-function setEntrega(tipo) {
-    tipoEntrega = tipo;
-    const btns = document.querySelectorAll('.btn-toggle');
-    btns.forEach(btn => btn.classList.remove('active'));
-    event.target.classList.add('active');
-    
-    const inputDir = document.getElementById('cliente-direccion');
-    if(tipo === 'pickup') {
-        inputDir.value = "Retiro en tienda (Valle Escondido)";
-        inputDir.disabled = true;
-    } else {
-        inputDir.value = "";
-        inputDir.disabled = false;
-        inputDir.focus();
-    }
-}
-
-// --- EXTRAS ---
+// --- EXTRAS VISUALES ---
 function verFotoGrande(src) { document.getElementById('lightbox-img').src = src; document.getElementById('lightbox').style.display = 'flex'; }
 function cerrarFotoGrande() { document.getElementById('lightbox').style.display = 'none'; }
 
