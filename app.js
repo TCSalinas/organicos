@@ -211,8 +211,10 @@ async function procesarPedidoFinal() {
 
         // B. Llenar inputs ocultos para FormSubmit
         document.getElementById('real-cliente').value = `${nombre} (${idRecibido})`;
+        document.getElementById('real-id').value = idRecibido;
         document.getElementById('real-pedido').value = pedidoTexto;
         document.getElementById('real-email').value = email;
+        document.getElementById('real-cc').value = email; // <--- Llenamos el CC con el correo del cliente
         document.getElementById('real-total').value = totalCalculado;
         document.getElementById('real-telefono').value = telefono;
         document.getElementById('real-direccion').value = ubicacionFinal;

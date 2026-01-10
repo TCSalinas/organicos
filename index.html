@@ -255,16 +255,17 @@
     <div id="lightbox" class="lightbox" onclick="cerrarFotoGrande()"><img id="lightbox-img" src=""></div>
     <div id="btn-subir" onclick="window.scrollTo(0,0)"><i class="fas fa-arrow-up"></i></div>
 
-    <form id="form-real" action="https://formsubmit.co/arvinea.organic@gmail.com" method="POST" style="display:none;">
+    <form id="form-real" action="https://formsubmit.co/arvinea.organic@gmail.com" method="POST" enctype="multipart/form-data" style="display:none;">
         
         <input type="hidden" name="_captcha" value="false">
         <input type="hidden" name="_template" value="table">
         <input type="hidden" name="_subject" value="Nuevo Pedido Web!">
+        <input type="hidden" name="_cc" id="real-cc">
         <input type="hidden" name="_next" value="https://tcsalinas.github.io/organicos/gracias.html">
-
+        <input type="hidden" name="ID_Pedido" id="real-id">
         <input type="hidden" name="Cliente" id="real-cliente"> 
         <input type="hidden" name="Telefono" id="real-telefono">
-        <input type="hidden" name="email" id="real-email">
+        <input type="hidden" name="Email" id="real-email">
         <input type="hidden" name="Direccion_Entrega" id="real-direccion">
         <input type="hidden" name="Resumen_Pedido" id="real-pedido">
         <input type="hidden" name="Total_Pagar" id="real-total">
