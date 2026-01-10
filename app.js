@@ -12,7 +12,7 @@ const STOCK = {
 };
 
 // URL de Sheet (Para el Excel) 
-const SHEET_API = 'https://script.google.com/macros/s/AKfycbwkyejdGsxDdSxmMMDSO61psbJQkMUnqxkXYRW2Cdr-IvfnVvmdCkSAG4AjDTITusSsbg/exec';
+const SHEET_API = 'https://script.google.com/macros/s/AKfycbxEFN2Gqhxr4q5-81FRNAY4scomDUObR0tQ6P3zHqmmiq-gzDCScpnubz9FmVeGjYEGuA/exec';
 
 // --- ARREGLO ESC LISTENER ---
 document.addEventListener('keydown', function(event) {
