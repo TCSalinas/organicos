@@ -164,8 +164,10 @@
             <div class="form-grupo">
                 <label>Información del cliente</label>
                 <input type="text" id="cliente-nombre" placeholder="Nombre completo">
+                <input type="email" id="cliente-email" placeholder="Correo electrónico (Para enviarte el comprobante)">
                 <input type="text" id="cliente-rut" placeholder="RUT (ej: 12345678-9)" oninput="formatoRut(this)">
                 <input type="tel" id="cliente-telefono" placeholder="Teléfono (9 dígitos)">
+                
             </div>
 
             <div id="contenedor-delivery" class="form-grupo">
@@ -253,17 +255,20 @@
     <div id="lightbox" class="lightbox" onclick="cerrarFotoGrande()"><img id="lightbox-img" src=""></div>
     <div id="btn-subir" onclick="window.scrollTo(0,0)"><i class="fas fa-arrow-up"></i></div>
 
-    <form id="form-real" action="https://formsubmit.co/arvinea.organic@gmail.com" method="POST" enctype="multipart/form-data" style="display:none;">
+    <form id="form-real" action="https://formsubmit.co/pedidos.arvinea@gmail.com" method="POST" style="display:none;">
+        
         <input type="hidden" name="_captcha" value="false">
+        <input type="hidden" name="_template" value="table">
         <input type="hidden" name="_subject" value="Nuevo Pedido Web!">
         <input type="hidden" name="_next" value="https://tcsalinas.github.io/organicos/gracias.html">
-        <input type="text" name="Pedido" id="real-pedido">
-        <input type="text" name="Total" id="real-total">
-        <input type="text" name="Cliente" id="real-cliente">
-        <input type="text" name="Telefono" id="real-telefono">
-        <input type="text" name="Direccion" id="real-direccion">
-        
-        <input type="file" name="Comprobante" id="real-file">
+
+        <input type="hidden" name="Cliente" id="real-cliente"> 
+        <input type="hidden" name="Telefono" id="real-telefono">
+        <input type="hidden" name="email" id="real-email">
+        <input type="hidden" name="Direccion_Entrega" id="real-direccion">
+        <input type="hidden" name="Resumen_Pedido" id="real-pedido">
+        <input type="hidden" name="Total_Pagar" id="real-total">
+
     </form>
 
     <script src="app.js"></script>

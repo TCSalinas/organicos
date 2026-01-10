@@ -12,7 +12,7 @@ const STOCK = {
 };
 
 // URL de Sheet (Para el Excel) 
-const SHEET_API = 'https://script.google.com/macros/s/AKfycbyajI5sDoe3MQ--mzzetiR3x6t4rUnPNqbi_S1RthMJUEj_9TMQSl5ogja-p3T1AS0CRA/exec';
+const SHEET_API = 'https://script.google.com/macros/s/AKfycbwkyejdGsxDdSxmMMDSO61psbJQkMUnqxkXYRW2Cdr-IvfnVvmdCkSAG4AjDTITusSsbg/exec';
 
 // --- ARREGLO ESC LISTENER ---
 document.addEventListener('keydown', function(event) {
@@ -158,6 +158,7 @@ function cambiarPestaña(tabId, vistaId, btnGroupId) {
 async function procesarPedidoFinal() {
     const nombre = document.getElementById('cliente-nombre').value;
     const telefono = document.getElementById('cliente-telefono').value;
+    const email = document.getElementById('cliente-email').value; // <--- NUEVO
     const rut = document.getElementById('cliente-rut').value;
     
     // Obtenemos la ubicación según lo seleccionado
@@ -170,6 +171,11 @@ async function procesarPedidoFinal() {
         if(!ubicacionFinal) { alert("Por favor selecciona un punto de retiro."); return; }
     }
 
+    if (!nombre || !email || !telefono) { // <--- NUEVO: Validamos email
+        alert("Por favor completa Nombre, Correo y Teléfono.");
+        return;
+    }
+
     const pedidoTexto = carrito.map(item => `${item.cantidad}x ${item.nombre}`).join(', ');
     
     // Calculamos total
@@ -179,6 +185,7 @@ async function procesarPedidoFinal() {
     const datos = {
         cliente: nombre,
         telefono: telefono,
+        email: email,
         rut: rut,
         entrega: tipoEntrega,
         ubicacion: ubicacionFinal,
@@ -205,6 +212,7 @@ async function procesarPedidoFinal() {
         // B. Llenar inputs ocultos para FormSubmit
         document.getElementById('real-cliente').value = `${nombre} (${idRecibido})`;
         document.getElementById('real-pedido').value = pedidoTexto;
+        document.getElementById('real-email').value = email;
         document.getElementById('real-total').value = totalCalculado;
         document.getElementById('real-telefono').value = telefono;
         document.getElementById('real-direccion').value = ubicacionFinal;
