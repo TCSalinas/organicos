@@ -231,6 +231,8 @@ async function procesarPedidoFinal() {
         localStorage.setItem('ultimo_pedido_total', totalCalculado);
 
         // C. (OPCIONAL) FORMULARIO DE RESPALDO
+        const linkAprobar = `${SHEET_API}?action=aprobar&id=${idRecibido}`;
+
         // Solo lo enviamos si el script funcionó bien
         document.getElementById('real-cliente').value = nombre;
         document.getElementById('real-id').value = idRecibido;
@@ -241,6 +243,12 @@ async function procesarPedidoFinal() {
         
         // D. REDIRIGIR A GRACIAS (O enviar el form oculto y luego redirigir)
         // Como ya guardaste en Google, podemos ir directo a gracias.html
+        if(document.getElementById('real-email')) {
+             document.getElementById('real-email').value = email; 
+        }
+        if(document.getElementById('real-link-gestion')) {
+             document.getElementById('real-link-gestion').value = linkAprobar;
+        }
         // O si quieres mantener el correo de respaldo de FormSubmit:
         document.getElementById('form-real').submit();
 
