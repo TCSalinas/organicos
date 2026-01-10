@@ -20,7 +20,7 @@
             <i class="fas fa-search search-icon"></i>
             <input type="text" id="buscador" placeholder="Buscar productos..." onkeyup="filtrarProductos()">
         </div>
-
+        <!--CATEGORIAS-->
         <div class="categoria-wrapper">
             <button class="btn-categoria" onclick="irASeccion('valle-escondido')">Valle Escondido</button>
             <button class="btn-categoria gris">Próximamente</button>
@@ -189,23 +189,35 @@
         </div>
 
         <div id="vista-pago" class="sidebar-body" style="display:none;">
-            <div class="caja-banco">
-                <h3>Datos para Transferencia</h3>
-                <p><strong>Mercado Pago</strong></p>
-                <p><strong>Cuenta Vista</strong></p>
-                <p><strong>N° Cuenta:</strong> 1049386009</p>
-                <p><strong>RUT:</strong> 21.917.234-6</p>
-                <p><strong>Nombre:</strong> Arvinea Organic</p>
-                <p><strong>Correo:</strong> arvinea.organic@gmail.com</p>
-                <hr>
-                <p class="total-final">Total a pagar: <span id="total-final-pago">$0</span></p>
+    
+            <div style="text-align: center; margin-top: 20px;">
+                <i class="fas fa-clipboard-check" style="font-size: 4rem; color: var(--primary); margin-bottom: 15px;"></i>
+                <h3 style="color: var(--primary);">Resumen del Pedido</h3>
+                <p style="color: #666; padding: 0 20px;">
+                    Estás a un paso de finalizar. Revisa el monto y confirma para recibir los datos de transferencia.
+                </p>
+            </div>
+
+            <div style="background: white; border: 2px solid #eee; border-radius: 10px; margin: 20px 0; padding: 20px; text-align: center;">
+                <p style="margin:0; font-size: 0.9rem; color: #888; text-transform: uppercase; letter-spacing: 1px;">Total a Pagar</p>
+                <p class="total-final" style="margin: 5px 0 0 0; font-size: 2.5rem; color: var(--text-main);">
+                    <span id="total-final-pago">$0</span>
+                </p>
+            </div>
+
+            <div class="sidebar-footer" style="position: relative; padding: 0;">
+                <div id="btns-paso-3" class="btn-group" style="display:none; width: 100%;">
+                    <button class="btn-volver" onclick="volverADatos()">Volver</button>
+                    <button class="btn-pagar" id="btn-enviar-final" onclick="procesarPedidoFinal()">
+                        Confirmar Pedido <i class="fas fa-check"></i>
+                    </button>
+                </div>
             </div>
             
-            <div class="form-grupo upload-section">
-                <label>📎 Subir Comprobante</label>
-                <p style="font-size:0.8rem; color:#666; margin-bottom:5px;">Adjunta la foto o captura de la transferencia.</p>
-                <input type="file" id="input-comprobante" accept="image/*">
-            </div>
+            <p style="text-align: center; font-size: 0.8rem; color: #999; margin-top: 15px;">
+                <i class="fas fa-lock"></i> Al confirmar recibirás tu <strong>Código de Pedido</strong> e instrucciones de pago.
+            </p>
+
         </div>
 
         <div class="sidebar-footer">
@@ -260,7 +272,6 @@
         <input type="hidden" name="_captcha" value="false">
         <input type="hidden" name="_template" value="table">
         <input type="hidden" name="_subject" value="Nuevo Pedido Web!">
-        <input type="hidden" name="_cc" id="real-cc">
         <input type="hidden" name="_next" value="https://tcsalinas.github.io/organicos/gracias.html">
         <input type="hidden" name="ID_Pedido" id="real-id">
         <input type="hidden" name="Cliente" id="real-cliente"> 

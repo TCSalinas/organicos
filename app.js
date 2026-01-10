@@ -12,7 +12,7 @@ const STOCK = {
 };
 
 // URL de Sheet (Para el Excel) 
-const SHEET_API = 'https://script.google.com/macros/s/AKfycbxVA3CcupYgUzQwl0zdD7q3lXlEd3YfbWRQRASUv3xuOeVHeDplpQdG-lWaB_Q-VWOcOQ/exec';
+const SHEET_API = 'https://script.google.com/macros/s/AKfycbx3tA0nmDFpV-fzY-frVZHasAhGFt6Ry3uwwbSrwGt6OW2CJZe5_zIabX-Kejbxp29XjA/exec';
 
 // --- ARREGLO ESC LISTENER ---
 document.addEventListener('keydown', function(event) {
@@ -155,13 +155,15 @@ function cambiarPestaña(tabId, vistaId, btnGroupId) {
 }
 
 // --- PROCESO FINAL ---
+// BUSCA ESTA FUNCIÓN Y REEMPLÁZALA COMPLETAMENTE
 async function procesarPedidoFinal() {
+    // 1. OBTENER DATOS
     const nombre = document.getElementById('cliente-nombre').value;
     const telefono = document.getElementById('cliente-telefono').value;
-    const email = document.getElementById('cliente-email').value; // <--- NUEVO
     const rut = document.getElementById('cliente-rut').value;
+    const email = document.getElementById('cliente-email') ? document.getElementById('cliente-email').value : '';
     
-    // Obtenemos la ubicación según lo seleccionado
+    // Ubicación
     let ubicacionFinal = "";
     if (tipoEntrega === 'delivery') {
         ubicacionFinal = document.getElementById('cliente-direccion').value;
@@ -171,63 +173,73 @@ async function procesarPedidoFinal() {
         if(!ubicacionFinal) { alert("Por favor selecciona un punto de retiro."); return; }
     }
 
-    if (!nombre || !email || !telefono) { // <--- NUEVO: Validamos email
-        alert("Por favor completa Nombre, Correo y Teléfono.");
+    // VALIDACIONES
+    if (!nombre || !telefono || (tipoEntrega === 'delivery' && !ubicacionFinal)) {
+        alert("Por favor completa los datos obligatorios.");
         return;
     }
 
-    const pedidoTexto = carrito.map(item => `${item.cantidad}x ${item.nombre}`).join(', ');
-    
-    // Calculamos total
+    // Calcular total
     let totalCalculado = 0;
     carrito.forEach(i => totalCalculado += (i.precioBase * i.cantidad));
+    const pedidoTexto = carrito.map(item => `${item.cantidad}x ${item.nombre}`).join(', ');
 
-    const datos = {
-        cliente: nombre,
-        telefono: telefono,
-        email: email,
-        rut: rut,
-        entrega: tipoEntrega,
-        ubicacion: ubicacionFinal,
-        pedido: pedidoTexto,
-        total: totalCalculado
-    };
-
+    // UI: Bloquear botón
     const btn = document.getElementById('btn-enviar-final');
-    const textoOriginal = btn.textContent;
-    btn.textContent = "Procesando...";
+    const textoOriginal = btn.innerHTML;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generando Pedido...';
     btn.disabled = true;
 
     try {
-        // A. Google Sheet (Obtener ID)
+        // A. ENVIAR A GOOGLE APPS SCRIPT
+        const datos = {
+            cliente: nombre,
+            email: email,
+            rut: rut,
+            telefono: telefono,
+            entrega: tipoEntrega,
+            ubicacion: ubicacionFinal,
+            pedido: pedidoTexto,
+            total: totalCalculado,
+            items: carrito
+        };
+
         const response = await fetch(SHEET_API, {
             method: 'POST',
             body: JSON.stringify(datos)
         });
+        
         const respuestaJson = await response.json();
-        const idRecibido = respuestaJson.idPedido || "PENDIENTE"; 
+        const idRecibido = respuestaJson.idPedido || "PENDIENTE";
 
-        console.log("Pedido guardado con ID:", idRecibido);
+        console.log("Pedido creado:", idRecibido);
 
+        // B. GUARDAR EN MEMORIA PARA LA PÁGINA DE GRACIAS
+        localStorage.setItem('ultimo_pedido_id', idRecibido);
+        localStorage.setItem('ultimo_pedido_total', totalCalculado);
+
+        // C. PREPARAR EL LINK DE GESTIÓN PARA FELIPE (Por si falla el robot)
         const linkAprobar = `${SHEET_API}?action=aprobar&id=${idRecibido}`;
-        document.getElementById('real-link-gestion').value = linkAprobar;
-        // B. Llenar inputs ocultos para FormSubmit
+
+        // D. LLENAR FORMULARIO OCULTO PARA FELIPE (FormSubmit)
         document.getElementById('real-cliente').value = nombre;
         document.getElementById('real-id').value = idRecibido;
-        document.getElementById('real-pedido').value = pedidoTexto;
-        document.getElementById('real-email').value = email;
-        document.getElementById('real-cc').value = email; // <--- Llenamos el CC con el correo del cliente
-        document.getElementById('real-total').value = totalCalculado;
         document.getElementById('real-telefono').value = telefono;
         document.getElementById('real-direccion').value = ubicacionFinal;
+        document.getElementById('real-pedido').value = pedidoTexto;
+        document.getElementById('real-total').value = totalCalculado;
+        
+        if(document.getElementById('real-link-gestion')) {
+            document.getElementById('real-link-gestion').value = linkAprobar;
+        }
 
-        // C. Enviar Formulario
+        // E. ENVIAR Y REDIRIGIR
         document.getElementById('form-real').submit();
 
     } catch (error) {
         console.error('Error:', error);
-        alert('Hubo un error de conexión. Intenta nuevamente.');
-        btn.textContent = textoOriginal;
+        alert('Hubo un problema de conexión. Inténtalo de nuevo.');
+        btn.innerHTML = textoOriginal;
         btn.disabled = false;
     }
 }
