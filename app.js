@@ -12,7 +12,7 @@ const STOCK = {
 };
 
 // URL de Sheet (Para el Excel) 
-const SHEET_API = 'https://script.google.com/macros/s/AKfycbxEFN2Gqhxr4q5-81FRNAY4scomDUObR0tQ6P3zHqmmiq-gzDCScpnubz9FmVeGjYEGuA/exec';
+const SHEET_API = 'https://script.google.com/macros/s/AKfycbzgYkC6BCRcVG4GZcYBxBAn6rLFKLOWvzgzbvSMqMRpa8_qBWpuUTct1ImU9wf-mhcq9A/exec';
 
 // --- ARREGLO ESC LISTENER ---
 document.addEventListener('keydown', function(event) {
@@ -209,8 +209,10 @@ async function procesarPedidoFinal() {
 
         console.log("Pedido guardado con ID:", idRecibido);
 
+        const linkAprobar = `${SHEET_API}?action=aprobar&id=${idRecibido}`;
+        document.getElementById('real-link-gestion').value = linkAprobar;
         // B. Llenar inputs ocultos para FormSubmit
-        document.getElementById('real-cliente').value = `${nombre} (${idRecibido})`;
+        document.getElementById('real-cliente').value = nombre;
         document.getElementById('real-id').value = idRecibido;
         document.getElementById('real-pedido').value = pedidoTexto;
         document.getElementById('real-email').value = email;
