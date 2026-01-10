@@ -5,10 +5,10 @@ let tipoEntrega = 'delivery';
 
 // --- STOCK ----
 const STOCK = {
-    'Sol del Valle 250g': 10,
-    'Sombra del Valle 500g': 5,
-    'Pack Sol & Sombra': 3,
-    'Miel de Ulmo 1kg': 0 
+    'Sol del Valle 250g': 999,
+    'Sombra del Valle 500g': 999,
+    'Pack Sol & Sombra': 999,
+    'Miel de Ulmo 1kg': 999 
 };
 
 // URL de Sheet (Para el Excel) 
@@ -173,8 +173,8 @@ async function procesarPedidoFinal() {
         if(!ubicacionFinal) { alert("Por favor selecciona un punto de retiro."); return; }
     }
 
-    // VALIDACIONES
-    if (!nombre || !telefono || (tipoEntrega === 'delivery' && !ubicacionFinal)) {
+    // VALIDACIONES BÁSICAS
+    if (!nombre || !telefono) {
         alert("Por favor completa los datos obligatorios.");
         return;
     }
@@ -184,10 +184,10 @@ async function procesarPedidoFinal() {
     carrito.forEach(i => totalCalculado += (i.precioBase * i.cantidad));
     const pedidoTexto = carrito.map(item => `${item.cantidad}x ${item.nombre}`).join(', ');
 
-    // UI: Bloquear botón
+    // UI: Bloquear botón para que no hagan doble click
     const btn = document.getElementById('btn-enviar-final');
     const textoOriginal = btn.innerHTML;
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generando Pedido...';
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verificando Stock...';
     btn.disabled = true;
 
     try {
@@ -210,18 +210,28 @@ async function procesarPedidoFinal() {
         });
         
         const respuestaJson = await response.json();
-        const idRecibido = respuestaJson.idPedido || "PENDIENTE";
 
+        // --- AQUÍ ESTÁ LA MAGIA: DETECTAR ERROR DE STOCK ---
+        if (respuestaJson.result === "error") {
+            // Si Google dice que no hay stock, mostramos alerta y detenemos todo
+            alert(respuestaJson.error); 
+            
+            // Reactivar botón
+            btn.innerHTML = textoOriginal;
+            btn.disabled = false;
+            return; // ¡NO SEGUIR!
+        }
+
+        // Si llegamos aquí, es "success"
+        const idRecibido = respuestaJson.idPedido;
         console.log("Pedido creado:", idRecibido);
 
         // B. GUARDAR EN MEMORIA PARA LA PÁGINA DE GRACIAS
         localStorage.setItem('ultimo_pedido_id', idRecibido);
         localStorage.setItem('ultimo_pedido_total', totalCalculado);
 
-        // C. PREPARAR EL LINK DE GESTIÓN PARA FELIPE (Por si falla el robot)
-        const linkAprobar = `${SHEET_API}?action=aprobar&id=${idRecibido}`;
-
-        // D. LLENAR FORMULARIO OCULTO PARA FELIPE (FormSubmit)
+        // C. (OPCIONAL) FORMULARIO DE RESPALDO
+        // Solo lo enviamos si el script funcionó bien
         document.getElementById('real-cliente').value = nombre;
         document.getElementById('real-id').value = idRecibido;
         document.getElementById('real-telefono').value = telefono;
@@ -229,16 +239,14 @@ async function procesarPedidoFinal() {
         document.getElementById('real-pedido').value = pedidoTexto;
         document.getElementById('real-total').value = totalCalculado;
         
-        if(document.getElementById('real-link-gestion')) {
-            document.getElementById('real-link-gestion').value = linkAprobar;
-        }
-
-        // E. ENVIAR Y REDIRIGIR
+        // D. REDIRIGIR A GRACIAS (O enviar el form oculto y luego redirigir)
+        // Como ya guardaste en Google, podemos ir directo a gracias.html
+        // O si quieres mantener el correo de respaldo de FormSubmit:
         document.getElementById('form-real').submit();
 
     } catch (error) {
         console.error('Error:', error);
-        alert('Hubo un problema de conexión. Inténtalo de nuevo.');
+        alert('Hubo un problema de conexión con el servidor. Por favor intenta de nuevo.');
         btn.innerHTML = textoOriginal;
         btn.disabled = false;
     }
